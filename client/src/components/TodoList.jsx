@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styles from "./TodoList.module.css";
 import APIHelper from "./APIs.js";
+import io from "socket.io-client";
+var socket = io.connect("http://localhost:4000");
 
 function TodoList() {
   const [todos, setTodos] = useState([]);
@@ -8,13 +10,17 @@ function TodoList() {
 
   useEffect(() => {
     const updateTodos = async () => {
+      console.log("do attempt");
       const todos = await APIHelper.getAllTodos();
       setTodos(todos);
     };
+    console.log("Socket attempt");
+    socket.emit("connection", "Hello");
     updateTodos();
   }, []);
 
   const createTodo = async (e) => {
+    console.log("create attempt");
     e.preventDefault();
     if (!todo) {
       return;
@@ -25,6 +31,7 @@ function TodoList() {
   };
 
   const deleteTodo = async (e, id) => {
+    console.log("delete attempt");
     try {
       e.stopPropagation();
       await APIHelper.deleteTodo(id);
